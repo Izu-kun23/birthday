@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login Page</title>
+    <!-- Tailwind CSS -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css" rel="stylesheet">
+    <style>
+        body {
+            background-image: url('./images/_3.jpeg'); /* Replace with your image URL */
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+        }
+    </style>
+</head>
+<body class="flex items-center justify-center h-screen">
+    <div class="bg-pink-300 p-8 rounded-lg shadow-lg max-w-lg w-full text-center bg-opacity-75">
+        <h4 class="text-2xl font-semibold mb-4">YOU GOT A WRISTBAND? NO ENTRY</h4>
+        <p class="text-xl mb-6">PASSWORD IS MR TAIWO’S FAVOURITE DATE</p>
+        <form id="loginForm">
+            <div class="mb-6">
+                <label for="password" class="block text-lg mb-2">ENTER PASSWORD</label>
+                <input type="password" id="password" class="form-input w-full px-4 py-2 border rounded-md" placeholder="Enter password" required>
+            </div>
+            <button type="submit" class="bg-purple-600 text-white text-lg px-6 py-3 rounded-md hover:bg-purple-700 w-full">LOGIN</button>
+        </form>
+    </div>
+    
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.js"></script>
+    <!-- JavaScript to handle form submission -->
+    <script>
+        document.getElementById('loginForm').addEventListener('submit', function(event) {
+            event.preventDefault(); // Prevent the form from submitting normally
+            var password = document.getElementById('password').value;
+            if (password) {
+                window.location.href = 'second.html'; // Redirect to home.html
+            } else {
+                alert('Please enter the password.'); // Alert if password is empty
+            }
+        });
+    </script>
+</body>
+</html>

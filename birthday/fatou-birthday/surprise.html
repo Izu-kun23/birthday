@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Surprise Page</title>
+    <!-- Tailwind CSS -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css" rel="stylesheet" />
+    <!-- Bootstrap CSS -->
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet" />
+    <!-- Custom Styles -->
+    <style>
+        body {
+            background-color: #FFC0CB; /* Pink background */
+            height: 100vh;
+            width: 100vw;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0;
+            overflow: hidden; /* Prevent scrollbars */
+            position: relative; /* Needed for absolute positioning of emojis */
+        }
+        .hidden-element {
+            opacity: 0;
+            transform: translateY(20px); /* Initial off-screen position */
+            transition: opacity 2s ease-in-out, transform 2s ease-in-out; /* Extended transition duration */
+        }
+        .visible-element {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        .badge {
+            position: absolute;
+            top: -10px;
+            right: -10px;
+            background: red;
+            color: white;
+            border-radius: 50%;
+            padding: 5px 10px;
+            font-size: 14px;
+        }
+        .btn-surprise {
+            opacity: 0;
+            transform: translateY(20px); /* Initial off-screen position */
+            transition: opacity 2s ease-in-out, transform 2s ease-in-out; /* Extended transition duration */
+            margin-top: 20px; /* Space from the icon */
+        }
+        .btn-surprise.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        .btn-surprise.delayed {
+            transition-delay: 3s; /* Delay before transition starts */
+        }
+        .emoji-container {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none; /* Emojis should not block interactions */
+            z-index: 10; /* Make sure emojis are on top */
+        }
+        .emoji {
+            font-size: 3rem; /* Make emoji slightly bigger */
+            position: absolute;
+            animation: swarm 5s forwards;
+        }
+        @keyframes swarm {
+            0% { opacity: 1; transform: translateY(0) scale(1); }
+            100% { opacity: 0; transform: translateY(-1000px) scale(2); }
+        }
+        .message {
+            opacity: 0;
+            transition: opacity 1s ease-in-out;
+            font-size: 1.25rem;
+            color: #000;
+            position: absolute;
+            bottom: 20px;
+        }
+        .message.show {
+            opacity: 1;
+        }
+        .speech-bubble {
+            position: absolute;
+            bottom: 50px; /* Adjust this value to position the speech bubble */
+            left: 50%;
+            transform: translateX(-50%);
+            background: #fff;
+            border: 2px solid #000;
+            border-radius: 5px;
+            padding: 10px;
+            width: 100px; /* Adjust width as necessary */
+            text-align: center;
+        }
+        .speech-bubble::after {
+            content: '';
+            position: absolute;
+            bottom: -10px; /* Adjust position to align with speech bubble */
+            left: 50%;
+            transform: translateX(-50%);
+            border-width: 10px;
+            border-style: solid;
+            border-color: #fff transparent transparent transparent;
+        }
+    </style>
+</head>
+<body>
+    <div class="relative flex items-center justify-center flex-col">
+        <div id="phoneIcon" class="hidden-element flex items-center justify-center">
+            <div class="relative">
+                <img src="./video/phone.gif" alt="Phone Icon" class="w-24 h-24">
+                <div class="badge">21+</div>
+            </div>
+        </div>
+        <button id="surpriseButton" class="btn btn-primary btn-surprise delayed">
+            Pick up bad gyal, it's Vybz again
+        </button>
+        <div id="emojiContainer" class="emoji-container"></div>
+        <div id="message" class="message"><div class="speech-bubble">LOL</div></div>
+    </div>
+
+    <!-- Audio Element -->
+    <audio id="audioElement" preload="auto">
+        <source src="./audio/ay_ay_yai.mp3" type="audio/mpeg" />
+        Your browser does not support the audio element.
+    </audio>
+
+    <!-- Bootstrap JS and dependencies -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    
+    <!-- Custom Script -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const phoneIcon = document.getElementById('phoneIcon');
+            const surpriseButton = document.getElementById('surpriseButton');
+            const audioElement = document.getElementById('audioElement');
+            const emojiContainer = document.getElementById('emojiContainer');
+            const message = document.getElementById('message');
+
+            // Function to play audio
+            function playAudio() {
+                if (audioElement) {
+                    audioElement.play().catch(error => {
+                        console.error('Audio playback failed:', error);
+                        // If autoplay fails, show the button to allow user interaction
+                        surpriseButton.classList.add('show');
+                    });
+                }
+            }
+
+            // Function to handle initial display
+            function showInitialElements() {
+                phoneIcon.classList.add('visible-element');
+                surpriseButton.classList.add('show');
+            }
+
+            // Function to change the phone icon to a laughing emoji and show the message
+            function showLaughingEmojiAndMessage() {
+                // Change phone icon to laughing emoji
+                phoneIcon.innerHTML = `<div class="relative"><img src="./images/laugh.png" alt="Laughing Emoji" class="w-32 h-32"></div>`;
+                
+                // Show message
+                message.classList.add('show');
+                
+                // Hide message after 3 seconds
+                setTimeout(() => {
+                    message.classList.remove('show');
+                }, 3000);
+                
+                // Change button text
+                surpriseButton.textContent = 'Joke man wyd, click again';
+                
+                // Set a flag to indicate navigation should occur
+                surpriseButton.dataset.redirect = 'true';
+            }
+
+            // Function to handle button click
+            function handleButtonClick() {
+                if (surpriseButton.dataset.redirect) {
+                    // Navigate to vid.html
+                    window.location.href = 'vid.html';
+                } else {
+                    playAudio(); // Play audio when button is clicked
+                    showLaughingEmojiAndMessage(); // Change phone icon and show message
+                }
+            }
+
+            // Show initial elements after 1 second
+            setTimeout(() => {
+                showInitialElements();
+                playAudio(); // Attempt to play audio
+            }, 1000); // Show phone icon after 1 second
+
+            // Add event listener to button
+            surpriseButton.addEventListener('click', handleButtonClick);
+        });
+    </script>
+</body>
+</html>

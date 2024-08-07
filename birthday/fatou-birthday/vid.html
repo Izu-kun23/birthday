@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Countdown and Message</title>
+    <!-- Include Pacifico font from Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Pacifico&display=swap" rel="stylesheet">
+    <style>
+        body {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #FFC0CB; /* Pink background */
+            color: #fff;
+            font-family: Arial, sans-serif;
+            overflow: hidden;
+            text-align: center;
+            position: relative;
+        }
+
+        .countdown {
+            font-size: 5rem;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            opacity: 0; /* Start hidden */
+            visibility: hidden; /* Start hidden */
+            z-index: 1; /* Ensure countdown is above other elements */
+        }
+
+        .message {
+            font-size: 6rem; /* Big text size */
+            font-weight: bold;
+            opacity: 0; /* Start hidden */
+            visibility: hidden; /* Start hidden */
+            color: #d60088;
+            white-space: pre-line; /* Ensure <br> tags are respected */
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 2; /* Ensure message is above countdown */
+            transition: opacity 0.5s ease, visibility 0.5s ease;
+            font-family: 'Pacifico', cursive; /* Apply Pacifico font */
+        }
+
+        .message span {
+            display: inline-block;
+            opacity: 0;
+            transform: translateY(20px);
+            transition: opacity 0.5s ease, transform 0.5s ease;
+        }
+
+        .button-container {
+            position: absolute;
+            top: 70%; /* Position button lower */
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 0; /* Ensure button is below other elements */
+        }
+
+        .button-container img {
+            width: 100px; /* Adjust as needed for larger size */
+            height: 100px; /* Adjust as needed for larger size */
+            display: block;
+            margin: 0 auto 10px auto; /* Center image and add bottom margin */
+        }
+
+        .button {
+            font-size: 2rem;
+            padding: 10px 20px;
+            background-color: #fff;
+            color: #d60088;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            opacity: 1; /* Start visible */
+        }
+
+        .arrow-button {
+            font-size: 2rem;
+            padding: 10px 20px;
+            background-color: #fff;
+            color: #d60088;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            position: absolute;
+            top: 70%; /* Adjust as needed */
+            right: 20px; /* Position on the right */
+            transform: translateY(-50%);
+            display: none; /* Hidden initially */
+            z-index: 3; /* Ensure above video container */
+        }
+
+        .event-message {
+            font-size: 4rem;
+            color: #fff;
+            opacity: 0; /* Start hidden */
+            visibility: hidden; /* Start hidden */
+            position: absolute;
+            top: calc(50% - 50px); /* Adjust to move up */
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 4; /* Ensure above everything else */
+            transition: opacity 1s ease-out, visibility 1s ease-out;
+            font-family: 'Pacifico', cursive; /* Apply Pacifico font */
+        }
+        
+
+        .video-container {
+            position: absolute;
+            opacity: 0; /* Start hidden */
+            visibility: hidden; /* Start hidden */
+            transition: opacity 1s ease-out, transform 1s ease-out; /* Smooth transition */
+            transform: scale(0); /* Start scaled down */
+            z-index: 6; /* Ensure above cake */
+        }
+
+        .video-container video {
+            width: 100%; /* Adjust to fit container */
+            height: 100%; /* Adjust to fit container */
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+        }
+
+        .cake {
+            width: 100px;
+            height: 100px;
+            background: url('./images/birthday-cake.png') no-repeat center center / cover;
+            position: absolute;
+            top: 50%;
+            left: 100%;
+            transform: translateY(-50%);
+            z-index: 5;
+            display: none;
+        }
+
+        .decor-lights {
+            width: 100%;
+            height: 50px;
+            background: url('./images/decor-lights.png') repeat-x center center / contain;
+            position: absolute;
+            top: 0;
+            left: 0;
+            opacity: 0;
+            z-index: 2;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
+        }
+
+    </style>
+</head>
+<body>
+    <div class="button-container">
+        <img src="./images/Sad-Hamster-with-Bow-girl-meme-8l99nf.jpg" alt="Icon">
+        <button id="triggerButton" class="button">Last one I promise ;></button>
+    </div>
+    <div id="countdown" class="countdown">3</div>
+    <div id="message" class="message">
+        <span>HAPPY</span><br>
+        <span>BIRTHDAY</span><br>
+        <span>FATOU!!!</span>
+    </div>
+    <button id="arrowButton" class="arrow-button">→</button>
+    <div id="eventMessage" class="event-message">Now time for the main event</div>
+    <div id="videoContainer" class="video-container">
+        <video src="./video/fat_vid.mp4" controls></video>
+    </div>
+    <div id="cake" class="cake"></div>
+    <div class="decor-lights"></div>
+    <audio id="audio" src="./audio/happybirthdayfunny.mp3"></audio> <!-- Include audio element -->
+
+    <!-- Include canvas-confetti library -->
+    <script src="https://cdn.jsdelivr.net/npm/js-confetti@latest/dist/js-confetti.browser.min.js"></script>
+    <!-- Include Anime.js library -->
+    <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.2/lib/anime.min.js"></script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const countdownElement = document.getElementById('countdown');
+            const messageElement = document.getElementById('message');
+            const messageSpans = messageElement.querySelectorAll('span');
+            const triggerButton = document.getElementById('triggerButton');
+            const arrowButton = document.getElementById('arrowButton');
+            const videoContainer = document.getElementById('videoContainer');
+            const eventMessage = document.getElementById('eventMessage');
+            const cake = document.getElementById('cake');
+            const audio = document.getElementById('audio');
+            const decorLights = document.querySelector('.decor-lights');
+            let countdown = 3;
+
+            // Initialize js-confetti
+            const jsConfetti = new JSConfetti();
+
+            function showMessage() {
+                // Hide the button and start countdown
+                triggerButton.style.opacity = '0';
+                triggerButton.style.visibility = 'hidden';
+                countdownElement.style.opacity = '1'; // Show countdown
+                countdownElement.style.visibility = 'visible';
+                audio.play(); // Start the audio when countdown starts
+                startCountdown();
+            }
+
+            function startCountdown() {
+                countdownElement.textContent = countdown;
+                countdown--;
+                if (countdown >= 0) {
+                    setTimeout(startCountdown, 1000);
+                } else {
+                    countdownElement.style.opacity = '0'; // Hide countdown
+                    countdownElement.style.visibility = 'hidden';
+                    transitionMessage();
+                }
+            }
+
+            function transitionMessage() {
+                decorLights.style.opacity = '1'; // Show decorative lights
+                messageElement.style.opacity = '1';
+                messageElement.style.visibility = 'visible';
+                messageSpans.forEach((span, index) => {
+                    setTimeout(() => {
+                        span.style.opacity = '1';
+                        span.style.transform = 'translateY(0)';
+                    }, index * 500); // Staggered animation
+                });
+                setTimeout(() => {
+                    // After message transition, start confetti
+                    jsConfetti.addConfetti({
+                        particleCount: 200,
+                        spread: 70,
+                        origin: { y: 0.6 },
+                        colors: ['#ff0000', '#00ff00', '#0000ff'] // Optional: specify colors
+                    });
+                    setTimeout(() => {
+                        // Show and animate the arrow button after 10 seconds
+                        arrowButton.style.display = 'block'; // Show the arrow button
+                        arrowButton.style.opacity = '1';
+                        arrowButton.style.visibility = 'visible';
+                    }, 10000); // 10 seconds
+                }, messageSpans.length * 500); // Total duration of message animation
+            }
+
+            function showEventMessage() {
+                // Fade out the message and decorative lights
+                anime({
+                    targets: [messageElement, decorLights],
+                    opacity: [1, 0],
+                    duration: 1000,
+                    easing: 'easeOutQuad',
+                    complete: () => {
+                        messageElement.style.visibility = 'hidden'; // Hide after fade out
+                        decorLights.style.visibility = 'hidden'; // Hide after fade out
+                        // Show and animate the event message
+                        eventMessage.style.opacity = '1';
+                        eventMessage.style.visibility = 'visible';
+                        anime({
+                            targets: eventMessage,
+                            opacity: [0, 1],
+                            duration: 1000,
+                            easing: 'easeOutQuad',
+                            complete: () => {
+                                // Animate event message to fade out
+                                setTimeout(() => {
+                                    anime({
+                                        targets: eventMessage,
+                                        opacity: [1, 0],
+                                        duration: 1000,
+                                        easing: 'easeOutQuad',
+                                        complete: () => {
+                                            eventMessage.style.visibility = 'hidden'; // Hide after fade out
+                                            // Show the cake and make it transition in
+                                            cake.style.display = 'block';
+                                            anime({
+                                                targets: cake,
+                                                translateX: ['100%', '0%'],
+                                                duration: 1000,
+                                                easing: 'easeOutQuad',
+                                                complete: () => {
+                                                    // Slide the video container out of the cake
+                                                    videoContainer.style.opacity = '1'; // Show the video container
+                                                    videoContainer.style.visibility = 'visible';
+                                                    anime({
+                                                        targets: videoContainer,
+                                                        scale: [0, 1], // Scale from 0 to full size
+                                                        opacity: [0, 1], // Fade in
+                                                        duration: 1000, // Duration of the transition
+                                                        easing: 'easeOutQuad' // Easing function
+                                                    });
+                                                    setTimeout(() => {
+                                                        anime({
+                                                            targets: cake,
+                                                            opacity: [1, 0],
+                                                            duration: 1000,
+                                                            easing: 'easeOutQuad',
+                                                            complete: () => {
+                                                                cake.style.display = 'none';
+                                                            }
+                                                        });
+                                                    }, 2000); // Delay before cake disappears
+                                                }
+                                            });
+                                        }
+                                    });
+                                }, 1000); // Delay before starting video transition
+                            }
+                        });
+                    }
+                });
+            }
+
+            // Event listener for the trigger button
+            triggerButton.addEventListener('click', showMessage);
+
+            // Event listener for the arrow button
+            arrowButton.addEventListener('click', showEventMessage);
+
+            // Debugging: check for JavaScript errors
+            console.log('JavaScript loaded successfully.');
+        });
+    </script>
+</body>
+</html>

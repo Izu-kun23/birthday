@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Home Page</title>
+    <!-- Tailwind CSS -->
+    <link
+      href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css"
+      rel="stylesheet"
+    />
+    <!-- Google Fonts -->
+    <link
+      href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@400;700&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      body {
+        background: #000; /* Start with a blank background */
+        height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 0 1rem;
+        position: relative;
+        font-family: "Arial", sans-serif;
+        overflow: hidden;
+        transition: background 2s ease-in-out;
+      }
+      .background-visible {
+        background: url("images/kman.jpg") no-repeat center center fixed;
+        background-size: cover;
+      }
+      .dancing-script {
+        font-family: "Dancing Script", cursive;
+      }
+      .hidden-element,
+      .mail-icon,
+      .click-me-button,
+      .info-box,
+      .click-me-again-button {
+        opacity: 0;
+        transform: translateY(20px); /* Ensure initial off-screen */
+        transition: opacity 1s ease-out, transform 1s ease-out;
+      }
+      .visible-element,
+      .mail-icon-visible,
+      .click-me-button-visible,
+      .info-box-visible,
+      .message-box-visible,
+      .click-me-again-button-visible {
+        opacity: 1;
+        transform: translateY(0);
+      }
+      .mail-icon {
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        cursor: pointer;
+        z-index: 10;
+      }
+      .mail-icon-hidden {
+        opacity: 0;
+        transform: translate(-50%, -50%) translateY(-100px); /* Move off-screen */
+      }
+      .mail-icon img {
+        width: 100px;
+        height: 100px;
+      }
+      .badge {
+        position: absolute;
+        top: -10px;
+        right: -10px;
+        background: red;
+        color: white;
+        border-radius: 50%;
+        padding: 8px 12px;
+        font-size: 16px;
+      }
+      .info-box {
+        position: fixed;
+        bottom: 20%;
+        left: 50%;
+        transform: translateX(-50%);
+        z-index: 5;
+      }
+      .click-me-button {
+        position: fixed;
+        bottom: 10%;
+        left: 50%;
+        transform: translateX(-50%);
+        z-index: 5;
+      }
+      .click-me-again-button {
+        position: fixed;
+        bottom: 7%;
+        left: 50%;
+        transform: translateX(-50%);
+        z-index: 5;
+        opacity: 0;
+        transform: translateY(20px); /* Ensure initial off-screen */
+        transition: opacity 1s ease-out, transform 1s ease-out;
+      }
+      .message-box {
+        opacity: 0;
+        transform: translateY(20px); /* Ensure it starts from off-screen */
+        transition: opacity 2s ease-in, transform 2s ease-in;
+      }
+      .message-box-visible {
+        opacity: 1;
+        transform: translateY(0);
+      }
+      .click-me-button-hidden {
+        opacity: 0;
+        transform: translateY(20px);
+        transition: opacity 1s ease-out, transform 1s ease-out;
+      }
+
+      
+      .click-me-again-button {
+        opacity: 0;
+        transform: translateY(20px); /* Ensure initial off-screen */
+        transition: opacity 1s ease-out, transform 1s ease-out;
+      }
+
+      
+      .click-me-again-button-visible {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    </style>
+  </head>
+  <body>
+    <div id="mailIcon" class="mail-icon">
+      <img src="./images/gmail.png" alt="Mail Icon" />
+      <div class="badge">1</div>
+    </div>
+
+    <div
+      id="infoBox"
+      class="hidden-element info-box bg-white bg-opacity-80 p-4 rounded-md shadow-lg flex items-center gap-4"
+    >
+      <p class="text-black font-semibold">
+        Now Playing: <strong>My Favorite Song</strong>
+      </p>
+      <button
+        id="playButton"
+        class="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600"
+      >
+        Play
+      </button>
+      <button
+        id="pauseButton"
+        class="bg-gray-500 text-white px-4 py-2 rounded-md hover:bg-gray-600"
+      >
+        Pause
+      </button>
+    </div>
+
+    <div
+      id="messageBox"
+      class="hidden-element message-box bg-pink-500 p-8 rounded-lg shadow-lg max-w-4xl w-full mx-20 text-white border-2 border-pink-500 dancing-script"
+    >
+      <h2 class="text-3xl leading-relaxed">
+        Mi Free now So mi herd it was ya 21st birthday, Happy birthday to my
+        love, mi know u was wid me since lung time. When mi come UK mi gon see
+        ya but I tink ur gyals wanna say something
+      </h2>
+    </div>
+
+    <button
+      id="clickMeButton"
+      class="hidden-element click-me-button bg-purple-600 text-white text-lg px-6 py-3 rounded-md hover:bg-purple-700"
+    >
+      You Have One New Message
+    </button>
+
+    <button
+      id="clickMeAgainButton"
+      class="hidden-element click-me-again-button bg-purple-600 text-white text-lg px-6 py-3 rounded-md hover:bg-purple-700"
+    >
+    Next Page >
+    </button>
+
+    <audio id="audioElement">
+      <source src="./audio/happybirthday.mp3" type="audio/mpeg" />
+      Your browser does not support the audio element.
+    </audio>
+
+    <script>
+      document.addEventListener("DOMContentLoaded", function () {
+        function handleMailIconClick() {
+          document.getElementById("mailIcon").classList.add("mail-icon-hidden");
+          document.body.classList.add("background-visible");
+          document.getElementById("infoBox").classList.add("visible-element");
+          document.getElementById("audioElement").play();
+
+          setTimeout(() => {
+            document
+              .getElementById("clickMeButton")
+              .classList.remove("hidden-element");
+            document
+              .getElementById("clickMeButton")
+              .classList.add("click-me-button-visible");
+          }, 8000);
+        }
+
+        document
+          .getElementById("playButton")
+          .addEventListener("click", function () {
+            document.getElementById("audioElement").play();
+          });
+
+        document
+          .getElementById("pauseButton")
+          .addEventListener("click", function () {
+            document.getElementById("audioElement").pause();
+          });
+
+        document
+          .getElementById("mailIcon")
+          .addEventListener("click", handleMailIconClick);
+
+        document
+          .getElementById("clickMeButton")
+          .addEventListener("click", function () {
+            var messageBox = document.getElementById("messageBox");
+            messageBox.classList.remove("hidden-element");
+
+            setTimeout(() => {
+              messageBox.classList.add("message-box-visible");
+            }, 100);
+
+            this.classList.add("click-me-button-hidden");
+
+            setTimeout(() => {
+              document
+                .getElementById("clickMeAgainButton")
+                .classList.remove("hidden-element");
+              document
+                .getElementById("clickMeAgainButton")
+                .classList.add("click-me-again-button-visible");
+            }, 15000);
+          });
+
+        document.getElementById("clickMeAgainButton").addEventListener(
+          "click",
+          function () {
+            window.location.href = "surprise.html";
+          },
+          { once: true }
+        );
+
+        setTimeout(() => {
+          document
+            .getElementById("mailIcon")
+            .classList.add("mail-icon-visible");
+        }, 2000);
+      });
+    </script>
+  </body>
+</html>
